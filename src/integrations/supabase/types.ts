@@ -14,7 +14,140 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      members: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          position: number
+          stokvel_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          phone?: string
+          position?: number
+          stokvel_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          position?: number
+          stokvel_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "members_stokvel_id_fkey"
+            columns: ["stokvel_id"]
+            isOneToOne: false
+            referencedRelation: "stokvels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          member_id: string
+          month: number
+          stokvel_id: string
+          year: number
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          member_id: string
+          month: number
+          stokvel_id: string
+          year: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          member_id?: string
+          month?: number
+          stokvel_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_stokvel_id_fkey"
+            columns: ["stokvel_id"]
+            isOneToOne: false
+            referencedRelation: "stokvels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          language: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          language?: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          language?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      stokvels: {
+        Row: {
+          admin_id: string
+          admin_phone: string
+          created_at: string
+          id: string
+          meeting_day: number
+          monthly_contribution: number
+          name: string
+          tier: string
+        }
+        Insert: {
+          admin_id: string
+          admin_phone?: string
+          created_at?: string
+          id?: string
+          meeting_day?: number
+          monthly_contribution?: number
+          name: string
+          tier?: string
+        }
+        Update: {
+          admin_id?: string
+          admin_phone?: string
+          created_at?: string
+          id?: string
+          meeting_day?: number
+          monthly_contribution?: number
+          name?: string
+          tier?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
