@@ -46,12 +46,16 @@ export function computeSummary(
 
   const expected = members.length * contribution * elapsed;
   const payoutAmount = contribution * members.length;
-  const payoutsMade =
+  const positionsPassed =
     year < now.getFullYear()
       ? members.length
       : year > now.getFullYear()
         ? 0
         : members.filter((m) => m.position < currentMonth).length;
+  // A payout can only have happened if the pot actually held enough money for it.
+  const affordable = payoutAmount > 0 ? Math.floor(collected / payoutAmount) : 0;
+  const payoutsMade = Math.min(positionsPassed, affordable);
+
 
   return {
     collected,
