@@ -28,6 +28,8 @@ const en = {
 
   // auth
   authTitle: "Sign in with your phone",
+  authTitleSignup: "Create your account",
+
   authSubtitle: "We use your phone number as your username.",
   haveAccount: "I already have an account",
   needAccount: "I am new here",
@@ -152,6 +154,8 @@ const xh: Record<Key, string> = {
   loading: "Iyalayisha...",
   somethingWrong: "Kukho into engahambanga kakuhle. Zama kwakhona.",
   authTitle: "Ngena ngenombolo yefowuni",
+  authTitleSignup: "Yenza iakhawunti yakho",
+
   authSubtitle: "Sisebenzisa inombolo yefowuni njengegama lomsebenzisi.",
   haveAccount: "Sendinayo iakhawunti",
   needAccount: "Ndingumtsha apha",
@@ -251,6 +255,8 @@ const zu: Record<Key, string> = {
   loading: "Iyalayisha...",
   somethingWrong: "Kukhona okungahambanga kahle. Zama futhi.",
   authTitle: "Ngena ngenombolo yefoni",
+  authTitleSignup: "Dala i-akhawunti yakho",
+
   authSubtitle: "Sisebenzisa inombolo yefoni njengegama lomsebenzisi.",
   haveAccount: "Nginayo kakade i-akhawunti",
   needAccount: "Ngimusha lapha",

@@ -71,7 +71,10 @@ function AuthPage() {
 
   return (
     <main className="mx-auto w-full max-w-md px-5 py-8">
-      <PageTitle subtitle={t("authSubtitle")}>{t("authTitle")}</PageTitle>
+      <PageTitle subtitle={t("authSubtitle")}>
+        {mode === "signup" ? t("authTitleSignup") : t("authTitle")}
+      </PageTitle>
+
 
       <form onSubmit={submit} className="space-y-4">
         <Field label={t("phone")} hint={t("phoneHint")}>
