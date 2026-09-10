@@ -52,7 +52,7 @@ function SettingsPage() {
     setName(stokvel.name);
     setAmount(stokvel.monthly_contribution);
     setDay(stokvel.meeting_day);
-    setPhone(stokvel.admin_phone);
+    setPhone(stokvel.admin_phone.replace(/^27/, "0"));
   }, [stokvel]);
 
   if (isLoading || !stokvel) {
