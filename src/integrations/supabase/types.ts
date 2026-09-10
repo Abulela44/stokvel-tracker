@@ -14,6 +14,162 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          stokvel_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          message: string
+          stokvel_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          stokvel_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_stokvel_id_fkey"
+            columns: ["stokvel_id"]
+            isOneToOne: false
+            referencedRelation: "stokvels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcement_reactions: {
+        Row: {
+          announcement_id: string
+          created_at: string
+          emoji: string
+          id: string
+          stokvel_id: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          created_at?: string
+          emoji: string
+          id?: string
+          stokvel_id: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+          stokvel_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_reactions_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcement_reactions_stokvel_id_fkey"
+            columns: ["stokvel_id"]
+            isOneToOne: false
+            referencedRelation: "stokvels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          attachment_path: string | null
+          author_name: string
+          created_at: string
+          id: string
+          message: string
+          stokvel_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_path?: string | null
+          author_name?: string
+          created_at?: string
+          id?: string
+          message?: string
+          stokvel_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_path?: string | null
+          author_name?: string
+          created_at?: string
+          id?: string
+          message?: string
+          stokvel_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_stokvel_id_fkey"
+            columns: ["stokvel_id"]
+            isOneToOne: false
+            referencedRelation: "stokvels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          created_at: string
+          doc_type: string
+          file_path: string
+          file_type: string
+          id: string
+          name: string
+          stokvel_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: string
+          file_path: string
+          file_type?: string
+          id?: string
+          name: string
+          stokvel_id: string
+          uploaded_by?: string
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string
+          file_path?: string
+          file_type?: string
+          id?: string
+          name?: string
+          stokvel_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_stokvel_id_fkey"
+            columns: ["stokvel_id"]
+            isOneToOne: false
+            referencedRelation: "stokvels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string
@@ -42,6 +198,70 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "members_stokvel_id_fkey"
+            columns: ["stokvel_id"]
+            isOneToOne: false
+            referencedRelation: "stokvels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_proofs: {
+        Row: {
+          amount: number | null
+          created_at: string
+          description: string | null
+          file_path: string
+          file_type: string
+          id: string
+          member_id: string | null
+          payment_id: string | null
+          status: string
+          stokvel_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          description?: string | null
+          file_path: string
+          file_type?: string
+          id?: string
+          member_id?: string | null
+          payment_id?: string | null
+          status?: string
+          stokvel_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          file_type?: string
+          id?: string
+          member_id?: string | null
+          payment_id?: string | null
+          status?: string
+          stokvel_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_proofs_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_proofs_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_proofs_stokvel_id_fkey"
             columns: ["stokvel_id"]
             isOneToOne: false
             referencedRelation: "stokvels"
