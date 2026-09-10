@@ -43,7 +43,7 @@ function RotationPage() {
   }
 
   const s = computeSummary(stokvel, members, payments, year);
-  const currentMonth = new Date().getMonth() + 1;
+  
 
   function move(index: number, direction: -1 | 1) {
     const next: Member[] = [...members];
@@ -70,7 +70,8 @@ function RotationPage() {
         <ol className="space-y-3">
           {members.map((m, i) => {
             const month = ((i % 12) + 1) as number;
-            const done = month < currentMonth;
+            const done = i < s.payoutsMade;
+
             return (
               <Card key={m.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
                 <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-primary font-bold text-primary-foreground">

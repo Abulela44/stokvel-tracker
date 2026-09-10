@@ -80,7 +80,7 @@ export function useTogglePayment(stokvelId: string | undefined, year: number) {
     mutationFn: async (input: {
       memberId: string;
       month: number;
-      existingId?: string;
+      existingId: string | undefined;
       amount: number;
     }) => {
       if (input.existingId) {
@@ -89,7 +89,8 @@ export function useTogglePayment(stokvelId: string | undefined, year: number) {
         return;
       }
       const { error } = await supabase.from("payments").insert({
-        stokvel_id: stokvelId,
+        stokvel_id: stokvelId!,
+
         member_id: input.memberId,
         year,
         month: input.month,
@@ -106,7 +107,7 @@ export function useAddMember(stokvelId: string | undefined, nextPosition: number
   return useMutation({
     mutationFn: async (input: { name: string; phone: string }) => {
       const { error } = await supabase.from("members").insert({
-        stokvel_id: stokvelId,
+        stokvel_id: stokvelId!,
         name: input.name,
         phone: input.phone,
         position: nextPosition,

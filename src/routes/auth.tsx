@@ -11,7 +11,7 @@ type Mode = "signin" | "signup";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { mode: Mode } => ({
-    mode: search.mode === "signup" ? "signup" : "signin",
+    mode: search["mode"] === "signup" ? "signup" : "signin",
   }),
   head: () => ({
     meta: [
@@ -71,7 +71,10 @@ function AuthPage() {
 
   return (
     <main className="mx-auto w-full max-w-md px-5 py-8">
-      <PageTitle subtitle={t("authSubtitle")}>{t("authTitle")}</PageTitle>
+      <PageTitle subtitle={t("authSubtitle")}>
+        {mode === "signup" ? t("authTitleSignup") : t("authTitle")}
+      </PageTitle>
+
 
       <form onSubmit={submit} className="space-y-4">
         <Field label={t("phone")} hint={t("phoneHint")}>
