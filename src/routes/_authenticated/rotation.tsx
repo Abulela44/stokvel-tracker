@@ -43,7 +43,7 @@ function RotationPage() {
   }
 
   const s = computeSummary(stokvel, members, payments, year);
-  const currentMonth = new Date().getMonth() + 1;
+  
 
   function move(index: number, direction: -1 | 1) {
     const next: Member[] = [...members];
