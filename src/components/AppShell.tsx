@@ -1,15 +1,15 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { Home, Users, Grid3x3, Repeat, MessageCircle, Settings } from "lucide-react";
+import { Home, Users, Grid3x3, Megaphone, FolderOpen, MoreHorizontal } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const tabs = [
   { to: "/dashboard", icon: Home, key: "navHome" },
-  { to: "/members", icon: Users, key: "navMembers" },
   { to: "/payments", icon: Grid3x3, key: "navPayments" },
-  { to: "/rotation", icon: Repeat, key: "navPayout" },
-  { to: "/reminders", icon: MessageCircle, key: "navRemind" },
-  { to: "/settings", icon: Settings, key: "navSettings" },
+  { to: "/members", icon: Users, key: "navMembers" },
+  { to: "/announcements", icon: Megaphone, key: "navAnnouncements" },
+  { to: "/documents", icon: FolderOpen, key: "navDocuments" },
+  { to: "/more", icon: MoreHorizontal, key: "navMore" },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
