@@ -111,12 +111,18 @@ const en = {
   freePrice: "R0",
   proPrice: "R39",
   monthShort: "/month",
-  freeFeature1: "Up to 15 members",
-  freeFeature2: "Payment grid and payout rotation",
-  freeFeature3: "WhatsApp reminders",
+  freeFeature1: "1 stokvel, up to 15 members",
+  freeFeature2: "Payments dashboard and payout rotation",
+  freeFeature3: "Announcement board",
+  freeFeature4: "Basic document uploads",
+  freeFeature5: "Payment proof uploads",
+  freeFeature6: "WhatsApp reminders",
   proFeature1: "Unlimited members",
-  proFeature2: "Everything in Free",
-  proFeature3: "Priority support",
+  proFeature2: "PDF statements",
+  proFeature3: "Automatic SMS",
+  proFeature4: "More document storage",
+  proFeature5: "Advanced payment reports",
+  proFeature6: "Export payment history",
   currentPlan: "Current plan",
   upgradeToPro: "Upgrade to Pro",
   upgradeComingSoon: "Card payment is not connected yet. We will contact you to activate Pro.",
@@ -127,12 +133,79 @@ const en = {
   plan: "Plan",
   savedChanges: "Changes saved.",
 
+  // nav extras
+  navAnnouncements: "News",
+  navDocuments: "Docs",
+  navMore: "More",
+  moreTitle: "More",
+
+  // announcements
+  announcementsTitle: "Announcement board",
+  announcementsHint: "Post news for your members. Newest shows first.",
+  newAnnouncement: "New announcement",
+  annTitle: "Title",
+  annMessage: "Message",
+  attachment: "Attachment (optional)",
+  post: "Post",
+  posting: "Posting...",
+  edit: "Edit",
+  delete: "Delete",
+  deleteConfirm: "Delete this? This cannot be undone.",
+  noAnnouncements: "No announcements yet. Post your first one.",
+  postedBy: "Posted by",
+  viewAttachment: "View attachment",
+  shareWhatsapp: "Share on WhatsApp",
+  waAnnouncement: "{stokvel} notice: {title}\n{message}",
+
+  // documents
+  documentsTitle: "Documents",
+  documentsHint: "Constitution, minutes, rules, statements and notices.",
+  uploadDocument: "Upload document",
+  docName: "Document name",
+  docType: "Type",
+  chooseFile: "Choose file",
+  upload: "Upload",
+  uploading: "Uploading...",
+  noDocuments: "No documents yet. Upload your constitution or minutes.",
+  view: "View",
+  docConstitution: "Constitution",
+  docMinutes: "Meeting minutes",
+  docRules: "Rules",
+  docStatement: "Statement",
+  docNotice: "Notice",
+  docOther: "Other",
+
+  // proof
+  proofTitle: "Payment proof",
+  proofHint: "Upload a screenshot, photo or PDF, then approve or reject it.",
+  uploadProof: "Upload proof",
+  member: "Member",
+  amountOptional: "Amount (optional)",
+  descriptionOptional: "Description (optional)",
+  status: "Status",
+  statusPending: "Pending",
+  statusApproved: "Approved",
+  statusRejected: "Rejected",
+  approve: "Approve",
+  reject: "Reject",
+  viewProof: "View proof",
+  linkToPayment: "Link to a paid month",
+  linkedToPayment: "Linked to a payment",
+  noProofs: "No proof uploaded yet.",
+  uploadedOn: "Uploaded",
+  chooseMember: "Choose a member",
+
+  // activity
+  activityTitle: "Recent activity",
+  noActivity: "Nothing has happened yet.",
+
   // messages
   waInvite:
     "Hello {name}! You are added to our stokvel {stokvel}. We contribute {amount} each month, due on day {day}. Reply here if you have questions. - {admin}",
   waReminder:
     "Hello {name}. Friendly reminder for {stokvel}: your {amount} contribution is due on {due}. Your outstanding balance is {balance}. Thank you!",
 };
+
 
 export type Key = keyof typeof en;
 
