@@ -13,8 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as AuthenticatedAnnouncementsRouteImport } from './routes/_authenticated/announcements'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticated/members'
+import { Route as AuthenticatedMoreRouteImport } from './routes/_authenticated/more'
 import { Route as AuthenticatedPaymentsRouteImport } from './routes/_authenticated/payments'
 import { Route as AuthenticatedRemindersRouteImport } from './routes/_authenticated/reminders'
 import { Route as AuthenticatedRotationRouteImport } from './routes/_authenticated/rotation'
@@ -40,14 +43,30 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAnnouncementsRoute =
+  AuthenticatedAnnouncementsRouteImport.update({
+    id: '/announcements',
+    path: '/announcements',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMembersRoute = AuthenticatedMembersRouteImport.update({
   id: '/members',
   path: '/members',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMoreRoute = AuthenticatedMoreRouteImport.update({
+  id: '/more',
+  path: '/more',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPaymentsRoute = AuthenticatedPaymentsRouteImport.update({
@@ -80,8 +99,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
+  '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/documents': typeof AuthenticatedDocumentsRoute
   '/members': typeof AuthenticatedMembersRoute
+  '/more': typeof AuthenticatedMoreRoute
   '/payments': typeof AuthenticatedPaymentsRoute
   '/reminders': typeof AuthenticatedRemindersRoute
   '/rotation': typeof AuthenticatedRotationRoute
@@ -92,8 +114,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
+  '/announcements': typeof AuthenticatedAnnouncementsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/documents': typeof AuthenticatedDocumentsRoute
   '/members': typeof AuthenticatedMembersRoute
+  '/more': typeof AuthenticatedMoreRoute
   '/payments': typeof AuthenticatedPaymentsRoute
   '/reminders': typeof AuthenticatedRemindersRoute
   '/rotation': typeof AuthenticatedRotationRoute
@@ -106,8 +131,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/pricing': typeof PricingRoute
+  '/_authenticated/announcements': typeof AuthenticatedAnnouncementsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/members': typeof AuthenticatedMembersRoute
+  '/_authenticated/more': typeof AuthenticatedMoreRoute
   '/_authenticated/payments': typeof AuthenticatedPaymentsRoute
   '/_authenticated/reminders': typeof AuthenticatedRemindersRoute
   '/_authenticated/rotation': typeof AuthenticatedRotationRoute
@@ -120,8 +148,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/pricing'
+    | '/announcements'
     | '/dashboard'
+    | '/documents'
     | '/members'
+    | '/more'
     | '/payments'
     | '/reminders'
     | '/rotation'
@@ -132,8 +163,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/pricing'
+    | '/announcements'
     | '/dashboard'
+    | '/documents'
     | '/members'
+    | '/more'
     | '/payments'
     | '/reminders'
     | '/rotation'
@@ -145,8 +179,11 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/pricing'
+    | '/_authenticated/announcements'
     | '/_authenticated/dashboard'
+    | '/_authenticated/documents'
     | '/_authenticated/members'
+    | '/_authenticated/more'
     | '/_authenticated/payments'
     | '/_authenticated/reminders'
     | '/_authenticated/rotation'
@@ -191,6 +228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/announcements': {
+      id: '/_authenticated/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -198,11 +242,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/documents': {
+      id: '/_authenticated/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/members': {
       id: '/_authenticated/members'
       path: '/members'
       fullPath: '/members'
       preLoaderRoute: typeof AuthenticatedMembersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/more': {
+      id: '/_authenticated/more'
+      path: '/more'
+      fullPath: '/more'
+      preLoaderRoute: typeof AuthenticatedMoreRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/payments': {
@@ -244,8 +302,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAnnouncementsRoute: typeof AuthenticatedAnnouncementsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedMembersRoute: typeof AuthenticatedMembersRoute
+  AuthenticatedMoreRoute: typeof AuthenticatedMoreRoute
   AuthenticatedPaymentsRoute: typeof AuthenticatedPaymentsRoute
   AuthenticatedRemindersRoute: typeof AuthenticatedRemindersRoute
   AuthenticatedRotationRoute: typeof AuthenticatedRotationRoute
@@ -254,8 +315,11 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAnnouncementsRoute: AuthenticatedAnnouncementsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedMembersRoute: AuthenticatedMembersRoute,
+  AuthenticatedMoreRoute: AuthenticatedMoreRoute,
   AuthenticatedPaymentsRoute: AuthenticatedPaymentsRoute,
   AuthenticatedRemindersRoute: AuthenticatedRemindersRoute,
   AuthenticatedRotationRoute: AuthenticatedRotationRoute,
