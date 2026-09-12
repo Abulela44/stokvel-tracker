@@ -6,7 +6,17 @@ import { AppShell } from "@/components/AppShell";
 import { Button, Card, Empty, Field, Input, Loading, PageTitle } from "@/components/kit";
 import { useT, type Key } from "@/lib/i18n";
 import { useRequireStokvel } from "@/lib/useRequireStokvel";
-import { openFile, useAddDocument, useDeleteDocument, useDocuments } from "@/lib/community";
+import {
+  ACCEPTED_UPLOADS,
+  checkUploadFile,
+  MAX_UPLOAD_BYTES,
+  openFile,
+  prettyBytes,
+  useAddDocument,
+  useDeleteDocument,
+  useDocuments,
+} from "@/lib/community";
+
 
 const DOC_TYPES: { value: string; key: Key }[] = [
   { value: "constitution", key: "docConstitution" },
