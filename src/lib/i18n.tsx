@@ -35,6 +35,8 @@ const en = {
   needAccount: "I am new here",
   phoneHint: "For example 0821234567",
   passwordHint: "At least 6 characters",
+  showPassword: "Show password",
+  hidePassword: "Hide password",
 
   // nav
   navHome: "Home",
@@ -234,6 +236,8 @@ const xh: Record<Key, string> = {
   needAccount: "Ndingumtsha apha",
   phoneHint: "Umzekelo 0821234567",
   passwordHint: "Ubuncinci iimpawu ezi-6",
+  showPassword: "Bonisa iphasiwedi",
+  hidePassword: "Fihla iphasiwedi",
   navHome: "Ekhaya",
   navMembers: "Amalungu",
   navPayments: "Iintlawulo",
@@ -363,6 +367,8 @@ const zu: Record<Key, string> = {
   needAccount: "Ngimusha lapha",
   phoneHint: "Isibonelo 0821234567",
   passwordHint: "Okungenani izinhlamvu eziyi-6",
+  showPassword: "Bonisa iphasiwedi",
+  hidePassword: "Fihla iphasiwedi",
   navHome: "Ekhaya",
   navMembers: "Amalunga",
   navPayments: "Izinkokhelo",

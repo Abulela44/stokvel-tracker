@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button, Field, Input, PageTitle } from "@/components/kit";
 import { LanguagePicker } from "@/components/LanguagePicker";
@@ -37,6 +38,7 @@ function AuthPage() {
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [busy, setBusy] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -88,12 +90,23 @@ function AuthPage() {
           />
         </Field>
         <Field label={t("password")} hint={t("passwordHint")}>
-          <Input
-            type="password"
-            autoComplete={mode === "signup" ? "new-password" : "current-password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pr-12"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+              className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          </div>
         </Field>
         <Button type="submit" className="w-full" disabled={busy}>
           {busy ? t("loading") : mode === "signup" ? t("signUp") : t("signIn")}
