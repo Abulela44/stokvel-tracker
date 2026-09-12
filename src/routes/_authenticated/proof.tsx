@@ -9,13 +9,18 @@ import { useRequireStokvel } from "@/lib/useRequireStokvel";
 import { useMembers } from "@/lib/data";
 import { randFormat } from "@/lib/stokvel";
 import {
-  getProofPublicUrl,
+  ACCEPTED_UPLOADS,
+  checkUploadFile,
+  getProofUrl,
+  prettyBytes,
+  MAX_UPLOAD_BYTES,
   useAddProof,
   useDeleteProof,
   useProofs,
   useUpdateProof,
   type ProofStatus,
 } from "@/lib/community";
+
 
 export const Route = createFileRoute("/_authenticated/proof")({
   head: () => ({
