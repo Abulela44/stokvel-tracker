@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const BUCKET = "stokvel-files";
+export const PROOF_BUCKET = "payment-proofs";
 export const REACTIONS = ["👍", "❤️", "😂", "😮"] as const;
 export type ProofStatus = "pending" | "approved" | "rejected";
 
@@ -234,6 +235,22 @@ export function useProofs(stokvelId: string | undefined) {
   });
 }
 
+export async function uploadProof(stokvelId: string, file: File) {
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${stokvelId}/proofs/${Date.now()}-${safe}`;
+  const { error } = await supabase.storage.from(PROOF_BUCKET).upload(path, file, {
+    contentType: file.type || "application/octet-stream",
+    upsert: false,
+  });
+  if (error) throw error;
+  return { path, type: file.type || "" };
+}
+
+export function getProofPublicUrl(path: string): string {
+  const { data } = supabase.storage.from(PROOF_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
 export function useAddProof(stokvelId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
@@ -244,7 +261,7 @@ export function useAddProof(stokvelId: string | undefined) {
       description: string;
       file: File;
     }) => {
-      const up = await uploadFile(stokvelId!, "proofs", input.file);
+      const up = await uploadProof(stokvelId!, input.file);
       const { error } = await supabase.from("payment_proofs").insert({
         stokvel_id: stokvelId!,
         member_id: input.memberId || null,
@@ -291,7 +308,7 @@ export function useDeleteProof(stokvelId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (p: Proof) => {
-      await removeFile(p.file_path);
+      await supabase.storage.from(PROOF_BUCKET).remove([p.file_path]);
       const { error } = await supabase.from("payment_proofs").delete().eq("id", p.id);
       if (error) throw error;
     },

@@ -19,6 +19,7 @@ import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticated/members'
 import { Route as AuthenticatedMoreRouteImport } from './routes/_authenticated/more'
 import { Route as AuthenticatedPaymentsRouteImport } from './routes/_authenticated/payments'
+import { Route as AuthenticatedProofRouteImport } from './routes/_authenticated/proof'
 import { Route as AuthenticatedRemindersRouteImport } from './routes/_authenticated/reminders'
 import { Route as AuthenticatedRotationRouteImport } from './routes/_authenticated/rotation'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -74,6 +75,11 @@ const AuthenticatedPaymentsRoute = AuthenticatedPaymentsRouteImport.update({
   path: '/payments',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProofRoute = AuthenticatedProofRouteImport.update({
+  id: '/proof',
+  path: '/proof',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRemindersRoute = AuthenticatedRemindersRouteImport.update({
   id: '/reminders',
   path: '/reminders',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/members': typeof AuthenticatedMembersRoute
   '/more': typeof AuthenticatedMoreRoute
   '/payments': typeof AuthenticatedPaymentsRoute
+  '/proof': typeof AuthenticatedProofRoute
   '/reminders': typeof AuthenticatedRemindersRoute
   '/rotation': typeof AuthenticatedRotationRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/members': typeof AuthenticatedMembersRoute
   '/more': typeof AuthenticatedMoreRoute
   '/payments': typeof AuthenticatedPaymentsRoute
+  '/proof': typeof AuthenticatedProofRoute
   '/reminders': typeof AuthenticatedRemindersRoute
   '/rotation': typeof AuthenticatedRotationRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/_authenticated/members': typeof AuthenticatedMembersRoute
   '/_authenticated/more': typeof AuthenticatedMoreRoute
   '/_authenticated/payments': typeof AuthenticatedPaymentsRoute
+  '/_authenticated/proof': typeof AuthenticatedProofRoute
   '/_authenticated/reminders': typeof AuthenticatedRemindersRoute
   '/_authenticated/rotation': typeof AuthenticatedRotationRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/members'
     | '/more'
     | '/payments'
+    | '/proof'
     | '/reminders'
     | '/rotation'
     | '/settings'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/members'
     | '/more'
     | '/payments'
+    | '/proof'
     | '/reminders'
     | '/rotation'
     | '/settings'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/_authenticated/members'
     | '/_authenticated/more'
     | '/_authenticated/payments'
+    | '/_authenticated/proof'
     | '/_authenticated/reminders'
     | '/_authenticated/rotation'
     | '/_authenticated/settings'
@@ -270,6 +282,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPaymentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/proof': {
+      id: '/_authenticated/proof'
+      path: '/proof'
+      fullPath: '/proof'
+      preLoaderRoute: typeof AuthenticatedProofRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reminders': {
       id: '/_authenticated/reminders'
       path: '/reminders'
@@ -308,6 +327,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMembersRoute: typeof AuthenticatedMembersRoute
   AuthenticatedMoreRoute: typeof AuthenticatedMoreRoute
   AuthenticatedPaymentsRoute: typeof AuthenticatedPaymentsRoute
+  AuthenticatedProofRoute: typeof AuthenticatedProofRoute
   AuthenticatedRemindersRoute: typeof AuthenticatedRemindersRoute
   AuthenticatedRotationRoute: typeof AuthenticatedRotationRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -321,6 +341,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMembersRoute: AuthenticatedMembersRoute,
   AuthenticatedMoreRoute: AuthenticatedMoreRoute,
   AuthenticatedPaymentsRoute: AuthenticatedPaymentsRoute,
+  AuthenticatedProofRoute: AuthenticatedProofRoute,
   AuthenticatedRemindersRoute: AuthenticatedRemindersRoute,
   AuthenticatedRotationRoute: AuthenticatedRotationRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
