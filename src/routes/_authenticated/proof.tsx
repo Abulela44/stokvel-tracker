@@ -159,14 +159,15 @@ function ProofPage() {
               placeholder="EFT reference 12345"
             />
           </Field>
-          <Field label={t("chooseFile")}>
+          <Field label={t("chooseFile")} hint={t("maxFileSize", { max: prettyBytes(MAX_UPLOAD_BYTES) })}>
             <input
               ref={fileRef}
               type="file"
-              accept="image/*,application/pdf"
+              accept={ACCEPTED_UPLOADS}
               className="w-full text-sm"
             />
           </Field>
+
           <Button type="submit" className="w-full" disabled={addProof.isPending}>
             {addProof.isPending ? t("uploading") : t("upload")}
           </Button>
@@ -214,7 +215,7 @@ function ProofPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => view(p.file_path)}
+                  onClick={() => void view(p.file_path)}
                 >
                   <Eye className="h-4 w-4" aria-hidden /> {t("viewProof")}
                 </Button>
