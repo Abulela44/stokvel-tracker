@@ -70,7 +70,12 @@ function ProofPage() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const file = fileRef.current?.files?.[0];
-    if (!file) {
+    const problem = checkUploadFile(file);
+    if (problem === "too-big") {
+      toast.error(t("fileTooBig", { max: prettyBytes(MAX_UPLOAD_BYTES) }));
+      return;
+    }
+    if (problem || !file) {
       toast.error(t("chooseFile"));
       return;
     }
@@ -90,7 +95,8 @@ function ProofPage() {
           setDescription("");
           if (fileRef.current) fileRef.current.value = "";
         },
-        onError: () => toast.error(t("somethingWrong")),
+        onError: (error) =>
+          toast.error(error instanceof Error ? error.message : t("somethingWrong")),
       },
     );
   }
@@ -105,10 +111,15 @@ function ProofPage() {
     );
   }
 
-  function view(path: string) {
-    const url = getProofPublicUrl(path);
-    window.open(url, "_blank", "noopener");
+  async function view(path: string) {
+    try {
+      const url = await getProofUrl(path);
+      window.open(url, "_blank", "noopener");
+    } catch {
+      toast.error(t("somethingWrong"));
+    }
   }
+
 
   return (
     <AppShell>
