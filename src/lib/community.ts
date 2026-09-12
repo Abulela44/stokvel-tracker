@@ -293,9 +293,9 @@ export function useUpdateProof(stokvelId: string | undefined) {
       paymentId?: string | null;
       note?: string;
     }) => {
-      const fields: Record<string, unknown> = {};
-      if (input.status) fields["status"] = input.status;
-      if (input.paymentId !== undefined) fields["payment_id"] = input.paymentId;
+      const fields: { status?: string; payment_id?: string | null } = {};
+      if (input.status) fields.status = input.status;
+      if (input.paymentId !== undefined) fields.payment_id = input.paymentId;
       const { error } = await supabase.from("payment_proofs").update(fields).eq("id", input.id);
       if (error) throw error;
       if (input.note) await logActivity(stokvelId!, "proof", input.note);
