@@ -177,8 +177,11 @@ export function useSaveAnnouncement(stokvelId: string | undefined) {
         _type = up.type;
       }
       if (input.id) {
-        const fields: Record<string, unknown> = { title: input.title, message: input.message };
-        if (attachment) fields["attachment_path"] = attachment;
+        const fields: { title: string; message: string; attachment_path?: string } = {
+          title: input.title,
+          message: input.message,
+        };
+        if (attachment) fields.attachment_path = attachment;
         const { error } = await supabase.from("announcements").update(fields).eq("id", input.id);
         if (error) throw error;
         return;
