@@ -324,7 +324,7 @@ export function useDeleteProof(stokvelId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (p: Proof) => {
-      await supabase.storage.from(PROOF_BUCKET).remove([p.file_path]);
+      await removeFile(p.file_path);
       const { error } = await supabase.from("payment_proofs").delete().eq("id", p.id);
       if (error) throw error;
     },
