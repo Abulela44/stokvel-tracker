@@ -9,13 +9,18 @@ import { useRequireStokvel } from "@/lib/useRequireStokvel";
 import { useMembers } from "@/lib/data";
 import { randFormat } from "@/lib/stokvel";
 import {
-  getProofPublicUrl,
+  ACCEPTED_UPLOADS,
+  checkUploadFile,
+  getProofUrl,
+  prettyBytes,
+  MAX_UPLOAD_BYTES,
   useAddProof,
   useDeleteProof,
   useProofs,
   useUpdateProof,
   type ProofStatus,
 } from "@/lib/community";
+
 
 export const Route = createFileRoute("/_authenticated/proof")({
   head: () => ({
@@ -65,7 +70,12 @@ function ProofPage() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const file = fileRef.current?.files?.[0];
-    if (!file) {
+    const problem = checkUploadFile(file);
+    if (problem === "too-big") {
+      toast.error(t("fileTooBig", { max: prettyBytes(MAX_UPLOAD_BYTES) }));
+      return;
+    }
+    if (problem || !file) {
       toast.error(t("chooseFile"));
       return;
     }
@@ -85,7 +95,8 @@ function ProofPage() {
           setDescription("");
           if (fileRef.current) fileRef.current.value = "";
         },
-        onError: () => toast.error(t("somethingWrong")),
+        onError: (error) =>
+          toast.error(error instanceof Error ? error.message : t("somethingWrong")),
       },
     );
   }
@@ -100,10 +111,15 @@ function ProofPage() {
     );
   }
 
-  function view(path: string) {
-    const url = getProofPublicUrl(path);
-    window.open(url, "_blank", "noopener");
+  async function view(path: string) {
+    try {
+      const url = await getProofUrl(path);
+      window.open(url, "_blank", "noopener");
+    } catch {
+      toast.error(t("somethingWrong"));
+    }
   }
+
 
   return (
     <AppShell>
@@ -143,14 +159,15 @@ function ProofPage() {
               placeholder="EFT reference 12345"
             />
           </Field>
-          <Field label={t("chooseFile")}>
+          <Field label={t("chooseFile")} hint={t("maxFileSize", { max: prettyBytes(MAX_UPLOAD_BYTES) })}>
             <input
               ref={fileRef}
               type="file"
-              accept="image/*,application/pdf"
+              accept={ACCEPTED_UPLOADS}
               className="w-full text-sm"
             />
           </Field>
+
           <Button type="submit" className="w-full" disabled={addProof.isPending}>
             {addProof.isPending ? t("uploading") : t("upload")}
           </Button>
@@ -198,7 +215,7 @@ function ProofPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => view(p.file_path)}
+                  onClick={() => void view(p.file_path)}
                 >
                   <Eye className="h-4 w-4" aria-hidden /> {t("viewProof")}
                 </Button>

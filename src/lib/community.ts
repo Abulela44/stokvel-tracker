@@ -2,9 +2,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const BUCKET = "stokvel-files";
-export const PROOF_BUCKET = "payment-proofs";
 export const REACTIONS = ["👍", "❤️", "😂", "😮"] as const;
 export type ProofStatus = "pending" | "approved" | "rejected";
+
+export const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
+
+export const ACCEPTED_UPLOADS =
+  "image/*,application/pdf,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt";
+
+export function prettyBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/** Returns an error string when the file cannot be uploaded, otherwise null. */
+export function checkUploadFile(file: File | null | undefined): string | null {
+  if (!file) return "no-file";
+  if (file.size === 0) return "empty-file";
+  if (file.size > MAX_UPLOAD_BYTES) return "too-big";
+  return null;
+}
+
 
 export type Announcement = {
   id: string;
@@ -239,20 +258,14 @@ export function useProofs(stokvelId: string | undefined) {
 }
 
 export async function uploadProof(stokvelId: string, file: File) {
-  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const path = `${stokvelId}/proofs/${Date.now()}-${safe}`;
-  const { error } = await supabase.storage.from(PROOF_BUCKET).upload(path, file, {
-    contentType: file.type || "application/octet-stream",
-    upsert: false,
-  });
-  if (error) throw error;
-  return { path, type: file.type || "" };
+  return uploadFile(stokvelId, "proofs", file);
 }
 
-export function getProofPublicUrl(path: string): string {
-  const { data } = supabase.storage.from(PROOF_BUCKET).getPublicUrl(path);
-  return data.publicUrl;
+/** Proof files live in a private bucket, so always hand out a short-lived signed link. */
+export async function getProofUrl(path: string): Promise<string> {
+  return openFile(path);
 }
+
 
 export function useAddProof(stokvelId: string | undefined) {
   const qc = useQueryClient();
@@ -311,7 +324,7 @@ export function useDeleteProof(stokvelId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (p: Proof) => {
-      await supabase.storage.from(PROOF_BUCKET).remove([p.file_path]);
+      await removeFile(p.file_path);
       const { error } = await supabase.from("payment_proofs").delete().eq("id", p.id);
       if (error) throw error;
     },

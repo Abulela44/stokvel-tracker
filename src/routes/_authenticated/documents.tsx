@@ -6,7 +6,17 @@ import { AppShell } from "@/components/AppShell";
 import { Button, Card, Empty, Field, Input, Loading, PageTitle } from "@/components/kit";
 import { useT, type Key } from "@/lib/i18n";
 import { useRequireStokvel } from "@/lib/useRequireStokvel";
-import { openFile, useAddDocument, useDeleteDocument, useDocuments } from "@/lib/community";
+import {
+  ACCEPTED_UPLOADS,
+  checkUploadFile,
+  MAX_UPLOAD_BYTES,
+  openFile,
+  prettyBytes,
+  useAddDocument,
+  useDeleteDocument,
+  useDocuments,
+} from "@/lib/community";
+
 
 const DOC_TYPES: { value: string; key: Key }[] = [
   { value: "constitution", key: "docConstitution" },
@@ -44,6 +54,8 @@ function Documents() {
 
   const [name, setName] = React.useState("");
   const [docType, setDocType] = React.useState("constitution");
+  const [picked, setPicked] = React.useState<File[]>([]);
+  const [busy, setBusy] = React.useState(false);
   const fileRef = React.useRef<HTMLInputElement>(null);
 
   if (isLoading || !stokvel) {
@@ -54,24 +66,52 @@ function Documents() {
     );
   }
 
-  const submit = (e: React.FormEvent) => {
+  const clearFiles = () => {
+    setPicked([]);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    const tooBig = files.find((f) => checkUploadFile(f) === "too-big");
+    if (tooBig) {
+      toast.error(t("fileTooBig", { max: prettyBytes(MAX_UPLOAD_BYTES) }));
+      clearFiles();
+      return;
+    }
+    setPicked(files);
+    if (!name.trim() && files[0]) {
+      setName(files[0].name.replace(/\.[^.]+$/, ""));
+    }
+  };
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const file = fileRef.current?.files?.[0];
-    if (!file) {
+    if (picked.length === 0) {
       toast.error(t("chooseFile"));
       return;
     }
-    add.mutate(
-      { name: name.trim(), docType, file, uploadedBy: "Admin" },
-      {
-        onSuccess: () => {
-          toast.success(t("savedChanges"));
-          setName("");
-          if (fileRef.current) fileRef.current.value = "";
-        },
-        onError: () => toast.error(t("somethingWrong")),
-      },
-    );
+    setBusy(true);
+    let done = 0;
+    try {
+      for (const [i, file] of picked.entries()) {
+        const label =
+          picked.length === 1
+            ? name.trim() || file.name
+            : name.trim()
+              ? `${name.trim()} ${i + 1}`
+              : file.name;
+        await add.mutateAsync({ name: label, docType, file, uploadedBy: "Admin" });
+        done += 1;
+      }
+      toast.success(t("uploadedCount", { count: done }));
+      setName("");
+      clearFiles();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("somethingWrong"));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const view = async (path: string) => {
@@ -82,6 +122,7 @@ function Documents() {
       toast.error(t("somethingWrong"));
     }
   };
+
 
   return (
     <AppShell>
