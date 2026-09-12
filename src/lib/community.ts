@@ -177,8 +177,11 @@ export function useSaveAnnouncement(stokvelId: string | undefined) {
         _type = up.type;
       }
       if (input.id) {
-        const fields: Record<string, unknown> = { title: input.title, message: input.message };
-        if (attachment) fields["attachment_path"] = attachment;
+        const fields: { title: string; message: string; attachment_path?: string } = {
+          title: input.title,
+          message: input.message,
+        };
+        if (attachment) fields.attachment_path = attachment;
         const { error } = await supabase.from("announcements").update(fields).eq("id", input.id);
         if (error) throw error;
         return;
@@ -290,9 +293,9 @@ export function useUpdateProof(stokvelId: string | undefined) {
       paymentId?: string | null;
       note?: string;
     }) => {
-      const fields: Record<string, unknown> = {};
-      if (input.status) fields["status"] = input.status;
-      if (input.paymentId !== undefined) fields["payment_id"] = input.paymentId;
+      const fields: { status?: string; payment_id?: string | null } = {};
+      if (input.status) fields.status = input.status;
+      if (input.paymentId !== undefined) fields.payment_id = input.paymentId;
       const { error } = await supabase.from("payment_proofs").update(fields).eq("id", input.id);
       if (error) throw error;
       if (input.note) await logActivity(stokvelId!, "proof", input.note);
