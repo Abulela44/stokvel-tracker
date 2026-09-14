@@ -152,16 +152,28 @@ function Documents() {
               ))}
             </select>
           </Field>
-          <Field label={t("chooseFile")}>
+          <Field label={t("chooseFile")} hint={t("maxFileSize", { max: prettyBytes(MAX_UPLOAD_BYTES) })}>
             <input
               ref={fileRef}
               type="file"
-              accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt"
+              accept={ACCEPTED_UPLOADS}
+              multiple
+              onChange={onPick}
               className="w-full text-sm"
             />
           </Field>
-          <Button type="submit" className="w-full" disabled={add.isPending}>
-            {add.isPending ? t("uploading") : t("upload")}
+          {picked.length > 0 ? (
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              {picked.map((file) => (
+                <li key={`${file.name}-${file.lastModified}`} className="flex justify-between gap-3">
+                  <span className="truncate">{file.name}</span>
+                  <span className="shrink-0">{prettyBytes(file.size)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <Button type="submit" className="w-full" disabled={busy}>
+            {busy ? t("uploading") : t("upload")}
           </Button>
         </form>
       </Card>
