@@ -5,10 +5,31 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Button, Card, Empty, Field, Input, Loading, PageTitle } from "@/components/kit";
 import { useAddMember, useMembers, usePayments, useRemoveMember } from "@/lib/data";
+import { useProofs } from "@/lib/community";
 import { useRequireStokvel } from "@/lib/useRequireStokvel";
 import { useT } from "@/lib/i18n";
 import { computeSummary } from "@/lib/summary";
 import { FREE_MEMBER_LIMIT, isValidSaPhone, randFormat, toWaNumber, waLink } from "@/lib/stokvel";
+
+type MemberStatus = "due" | "sent" | "confirmed";
+
+const STATUS_DOT: Record<MemberStatus, string> = {
+  due: "bg-destructive",
+  sent: "bg-primary",
+  confirmed: "bg-[hsl(var(--success))]",
+};
+
+function StatusDot({ status, label }: { status: MemberStatus; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <span
+        className={`inline-block h-3 w-3 shrink-0 rounded-full ${STATUS_DOT[status]}`}
+        aria-hidden
+      />
+      <span>{label}</span>
+    </span>
+  );
+}
 
 export const Route = createFileRoute("/_authenticated/members")({
   head: () => ({
