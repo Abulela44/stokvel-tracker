@@ -75,6 +75,25 @@ function MembersPage() {
   const isFree = stokvel.tier !== "pro";
   const atLimit = isFree && members.length >= FREE_MEMBER_LIMIT;
 
+  const month = new Date().getMonth() + 1;
+  const paidThisMonth = new Set(
+    payments.filter((p) => p.month === month && (p.amount ?? 0) > 0).map((p) => p.member_id),
+  );
+  const proofStatusByMember = new Map<string, MemberStatus>();
+  for (const p of proofs) {
+    if (!p.member_id) continue;
+    if (p.status === "approved") proofStatusByMember.set(p.member_id, "confirmed");
+    else if (p.status === "pending" && proofStatusByMember.get(p.member_id) !== "confirmed") {
+      proofStatusByMember.set(p.member_id, "sent");
+    }
+  }
+
+  function statusFor(memberId: string): MemberStatus {
+    if (paidThisMonth.has(memberId)) return "confirmed";
+    return proofStatusByMember.get(memberId) ?? "due";
+  }
+
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (name.trim().length < 2) {
