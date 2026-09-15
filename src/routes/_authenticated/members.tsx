@@ -5,10 +5,31 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Button, Card, Empty, Field, Input, Loading, PageTitle } from "@/components/kit";
 import { useAddMember, useMembers, usePayments, useRemoveMember } from "@/lib/data";
+import { useProofs } from "@/lib/community";
 import { useRequireStokvel } from "@/lib/useRequireStokvel";
 import { useT } from "@/lib/i18n";
 import { computeSummary } from "@/lib/summary";
 import { FREE_MEMBER_LIMIT, isValidSaPhone, randFormat, toWaNumber, waLink } from "@/lib/stokvel";
+
+type MemberStatus = "due" | "sent" | "confirmed";
+
+const STATUS_DOT: Record<MemberStatus, string> = {
+  due: "bg-destructive",
+  sent: "bg-primary",
+  confirmed: "bg-success",
+};
+
+function StatusDot({ status, label }: { status: MemberStatus; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <span
+        className={`inline-block h-3 w-3 shrink-0 rounded-full ${STATUS_DOT[status]}`}
+        aria-hidden
+      />
+      <span>{label}</span>
+    </span>
+  );
+}
 
 export const Route = createFileRoute("/_authenticated/members")({
   head: () => ({
@@ -34,6 +55,7 @@ function MembersPage() {
   const { data: stokvel, isLoading } = useRequireStokvel();
   const { data: members = [], isLoading: loadingMembers } = useMembers(stokvel?.id);
   const { data: payments = [] } = usePayments(stokvel?.id, year);
+  const { data: proofs = [] } = useProofs(stokvel?.id);
   const addMember = useAddMember(stokvel?.id, members.length + 1);
   const removeMember = useRemoveMember(stokvel?.id);
 
@@ -52,6 +74,25 @@ function MembersPage() {
   const s = computeSummary(stokvel, members, payments, year);
   const isFree = stokvel.tier !== "pro";
   const atLimit = isFree && members.length >= FREE_MEMBER_LIMIT;
+
+  const month = new Date().getMonth() + 1;
+  const paidThisMonth = new Set(
+    payments.filter((p) => p.month === month && (p.amount ?? 0) > 0).map((p) => p.member_id),
+  );
+  const proofStatusByMember = new Map<string, MemberStatus>();
+  for (const p of proofs) {
+    if (!p.member_id) continue;
+    if (p.status === "approved") proofStatusByMember.set(p.member_id, "confirmed");
+    else if (p.status === "pending" && proofStatusByMember.get(p.member_id) !== "confirmed") {
+      proofStatusByMember.set(p.member_id, "sent");
+    }
+  }
+
+  function statusFor(memberId: string): MemberStatus {
+    if (paidThisMonth.has(memberId)) return "confirmed";
+    return proofStatusByMember.get(memberId) ?? "due";
+  }
+
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -135,11 +176,30 @@ function MembersPage() {
         <Empty>{t("noMembers")}</Empty>
       ) : (
         <ul className="space-y-3">
+          <li className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl bg-card px-3 py-2">
+            <span className="text-xs font-semibold">{t("paymentStatusLegend")}:</span>
+            <StatusDot status="due" label={t("paymentDue")} />
+            <StatusDot status="sent" label={t("paymentSent")} />
+            <StatusDot status="confirmed" label={t("paymentConfirmed")} />
+          </li>
           {members.map((m) => (
             <Card key={m.id} className="space-y-3">
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                 <div className="min-w-0">
-                  <div className="truncate font-bold">{m.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-block h-3.5 w-3.5 shrink-0 rounded-full ${STATUS_DOT[statusFor(m.id)]}`}
+                      role="img"
+                      aria-label={t(
+                        statusFor(m.id) === "confirmed"
+                          ? "paymentConfirmed"
+                          : statusFor(m.id) === "sent"
+                            ? "paymentSent"
+                            : "paymentDue",
+                      )}
+                    />
+                    <span className="truncate font-bold">{m.name}</span>
+                  </div>
                   <div className="truncate text-sm text-muted-foreground">
                     {m.phone || t("noPhone")}
                   </div>
