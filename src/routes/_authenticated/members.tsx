@@ -16,7 +16,7 @@ type MemberStatus = "due" | "sent" | "confirmed";
 const STATUS_DOT: Record<MemberStatus, string> = {
   due: "bg-destructive",
   sent: "bg-primary",
-  confirmed: "bg-[hsl(var(--success))]",
+  confirmed: "bg-success",
 };
 
 function StatusDot({ status, label }: { status: MemberStatus; label: string }) {
