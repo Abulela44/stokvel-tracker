@@ -55,6 +55,7 @@ function MembersPage() {
   const { data: stokvel, isLoading } = useRequireStokvel();
   const { data: members = [], isLoading: loadingMembers } = useMembers(stokvel?.id);
   const { data: payments = [] } = usePayments(stokvel?.id, year);
+  const { data: proofs = [] } = useProofs(stokvel?.id);
   const addMember = useAddMember(stokvel?.id, members.length + 1);
   const removeMember = useRemoveMember(stokvel?.id);
 
