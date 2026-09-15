@@ -176,11 +176,30 @@ function MembersPage() {
         <Empty>{t("noMembers")}</Empty>
       ) : (
         <ul className="space-y-3">
+          <li className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl bg-card px-3 py-2">
+            <span className="text-xs font-semibold">{t("paymentStatusLegend")}:</span>
+            <StatusDot status="due" label={t("paymentDue")} />
+            <StatusDot status="sent" label={t("paymentSent")} />
+            <StatusDot status="confirmed" label={t("paymentConfirmed")} />
+          </li>
           {members.map((m) => (
             <Card key={m.id} className="space-y-3">
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                 <div className="min-w-0">
-                  <div className="truncate font-bold">{m.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-block h-3.5 w-3.5 shrink-0 rounded-full ${STATUS_DOT[statusFor(m.id)]}`}
+                      role="img"
+                      aria-label={t(
+                        statusFor(m.id) === "confirmed"
+                          ? "paymentConfirmed"
+                          : statusFor(m.id) === "sent"
+                            ? "paymentSent"
+                            : "paymentDue",
+                      )}
+                    />
+                    <span className="truncate font-bold">{m.name}</span>
+                  </div>
                   <div className="truncate text-sm text-muted-foreground">
                     {m.phone || t("noPhone")}
                   </div>
