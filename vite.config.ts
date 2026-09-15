@@ -6,22 +6,32 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// The generated Cloud client uses literal bracket access for Vite variables.
-// Vite only guarantees production replacement for direct property access, so
-// normalize these two expressions without modifying the generated client.
+const cloudUrl =
+  process.env["VITE_SUPABASE_URL"] ??
+  process.env["SUPABASE_URL"] ??
+  "https://fjjfcnevxaihiwmnhafp.supabase.co";
+const cloudPublishableKey =
+  process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ??
+  process.env["SUPABASE_PUBLISHABLE_KEY"] ??
+  "sb_publishable_j7TVQFsAr6XdQebSSBG8Ig_gVcZje_g";
+
+// The generated Cloud client uses bracket access for Vite variables, which is
+// not reliably substituted in production. Inline these public browser values
+// without modifying the generated integration file.
 const normalizeCloudClientEnv = {
   name: "normalize-cloud-client-env",
   enforce: "pre" as const,
   transform(code: string, id: string) {
-    if (!id.replaceAll("\\", "/").endsWith("/src/integrations/supabase/client.ts")) {
+    const cleanId = id.split("?", 1)[0]?.replaceAll("\\", "/");
+    if (!cleanId?.endsWith("/src/integrations/supabase/client.ts")) {
       return null;
     }
 
     return code
-      .replaceAll("import.meta.env['VITE_SUPABASE_URL']", "import.meta.env.VITE_SUPABASE_URL")
+      .replaceAll("import.meta.env['VITE_SUPABASE_URL']", JSON.stringify(cloudUrl))
       .replaceAll(
         "import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY']",
-        "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY",
+        JSON.stringify(cloudPublishableKey),
       );
   },
 };
