@@ -46,6 +46,45 @@ export type Database = {
           },
         ]
       }
+      admin_verifications: {
+        Row: {
+          created_at: string
+          id: string
+          id_document_path: string
+          id_document_type: string
+          proof_of_account_path: string
+          proof_of_account_type: string
+          review_note: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          id_document_path: string
+          id_document_type?: string
+          proof_of_account_path: string
+          proof_of_account_type?: string
+          review_note?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          id_document_path?: string
+          id_document_type?: string
+          proof_of_account_path?: string
+          proof_of_account_type?: string
+          review_note?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       announcement_reactions: {
         Row: {
           announcement_id: string
