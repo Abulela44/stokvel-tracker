@@ -1,8 +1,9 @@
 import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
-import { Empty, Loading, PageTitle, Stat } from "@/components/kit";
+import { Button, Empty, Loading, PageTitle, Stat } from "@/components/kit";
 import { useMembers, usePayments, useTogglePayment } from "@/lib/data";
 import { useRequireStokvel } from "@/lib/useRequireStokvel";
 import { useT } from "@/lib/i18n";
@@ -85,6 +86,15 @@ function PaymentsPage() {
         <Stat label={t("collected")} value={randFormat(s.collected)} tone="gold" />
         <Stat label={t("outstanding")} value={randFormat(s.outstanding)} />
         <Stat label={t("balance")} value={randFormat(s.balance)} tone="gold" />
+      </div>
+
+      <div className="mb-4">
+        <Link to="/chat">
+          <Button variant="outline" size="sm" className="w-full">
+            <MessageCircle className="h-4 w-4" />
+            Transaction Chat
+          </Button>
+        </Link>
       </div>
 
       {loadingPayments ? (
