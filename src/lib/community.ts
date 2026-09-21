@@ -2,13 +2,24 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const BUCKET = "stokvel-files";
+export const DOCS_BUCKET = "stokvel-documents";
 export const REACTIONS = ["👍", "❤️", "😂", "😮"] as const;
 export type ProofStatus = "pending" | "approved" | "rejected";
 
 export const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 
 export const ACCEPTED_UPLOADS =
-  "image/*,application/pdf,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt";
+  "image/jpeg,image/jpg,image/png,application/pdf,.pdf,.doc,.docx,.jpg,.jpeg,.png";
+export const DOCS_MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
+export const DOCS_ACCEPTED_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+export const DOCS_ACCEPTED_EXTS = [".pdf", ".jpg", ".jpeg", ".png", ".doc", ".docx"];
 
 export function prettyBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -60,9 +71,13 @@ export type StokvelDocument = {
   stokvel_id: string;
   name: string;
   doc_type: string;
+  category: string;
   file_path: string;
   file_type: string;
+  file_size: number | null;
+  storage_path: string | null;
   uploaded_by: string;
+  uploaded_by_user_id: string | null;
   created_at: string;
 };
 
@@ -334,6 +349,53 @@ export function useDeleteProof(stokvelId: string | undefined) {
 
 /* ---------- documents ---------- */
 
+export function checkDocFile(file: File): string | null {
+  if (!file) return "no-file";
+  if (file.size === 0) return "empty-file";
+  if (file.size > DOCS_MAX_UPLOAD_BYTES) return "too-big";
+  const ext = "." + (file.name.split(".").pop() ?? "").toLowerCase();
+  if (!DOCS_ACCEPTED_EXTS.includes(ext) && !DOCS_ACCEPTED_TYPES.includes(file.type)) return "bad-type";
+  return null;
+}
+
+export async function uploadDocFile(stokvelId: string, file: File) {
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${stokvelId}/documents/${Date.now()}-${safe}`;
+  const { error } = await supabase.storage.from(DOCS_BUCKET).upload(path, file, {
+    contentType: file.type || "application/octet-stream",
+    upsert: false,
+  });
+  if (error) throw error;
+  return { path, type: file.type || "" };
+}
+
+export async function getDocSignedUrl(path: string): Promise<string> {
+  const { data, error } = await supabase.storage.from(DOCS_BUCKET).createSignedUrl(path, 60 * 10);
+  if (error) throw error;
+  return data.signedUrl;
+}
+
+export async function downloadDocFile(path: string, fileName: string): Promise<void> {
+  const { data, error } = await supabase.storage.from(DOCS_BUCKET).createSignedUrl(path, 60 * 10);
+  if (error) throw error;
+  const resp = await fetch(data.signedUrl);
+  if (!resp.ok) throw new Error("Download failed");
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function removeDocFile(path: string | null | undefined) {
+  if (!path) return;
+  await supabase.storage.from(DOCS_BUCKET).remove([path]);
+}
+
 export function useDocuments(stokvelId: string | undefined) {
   return useQuery({
     queryKey: ["documents", stokvelId],
@@ -341,7 +403,7 @@ export function useDocuments(stokvelId: string | undefined) {
     queryFn: async (): Promise<StokvelDocument[]> => {
       const { data, error } = await supabase
         .from("documents")
-        .select("id, stokvel_id, name, doc_type, file_path, file_type, uploaded_by, created_at")
+        .select("id, stokvel_id, name, doc_type, category, file_path, file_type, file_size, storage_path, uploaded_by, uploaded_by_user_id, created_at")
         .eq("stokvel_id", stokvelId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -355,17 +417,20 @@ export function useAddDocument(stokvelId: string | undefined) {
   return useMutation({
     mutationFn: async (input: {
       name: string;
-      docType: string;
+      category: string;
       file: File;
       uploadedBy: string;
     }) => {
-      const up = await uploadFile(stokvelId!, "documents", input.file);
+      const up = await uploadDocFile(stokvelId!, input.file);
       const { error } = await supabase.from("documents").insert({
         stokvel_id: stokvelId!,
         name: input.name || input.file.name,
-        doc_type: input.docType,
+        doc_type: input.category,
+        category: input.category,
         file_path: up.path,
         file_type: up.type,
+        file_size: input.file.size,
+        storage_path: up.path,
         uploaded_by: input.uploadedBy,
       });
       if (error) throw error;
@@ -382,7 +447,8 @@ export function useDeleteDocument(stokvelId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (d: StokvelDocument) => {
-      await removeFile(d.file_path);
+      const path = d.storage_path || d.file_path;
+      await removeDocFile(path);
       const { error } = await supabase.from("documents").delete().eq("id", d.id);
       if (error) throw error;
     },

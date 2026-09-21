@@ -170,34 +170,46 @@ export type Database = {
       }
       documents: {
         Row: {
+          category: string
           created_at: string
           doc_type: string
           file_path: string
+          file_size: number | null
           file_type: string
           id: string
           name: string
           stokvel_id: string
+          storage_path: string | null
           uploaded_by: string
+          uploaded_by_user_id: string | null
         }
         Insert: {
+          category?: string
           created_at?: string
           doc_type?: string
           file_path: string
+          file_size?: number | null
           file_type?: string
           id?: string
           name: string
           stokvel_id: string
+          storage_path?: string | null
           uploaded_by?: string
+          uploaded_by_user_id?: string | null
         }
         Update: {
+          category?: string
           created_at?: string
           doc_type?: string
           file_path?: string
+          file_size?: number | null
           file_type?: string
           id?: string
           name?: string
           stokvel_id?: string
+          storage_path?: string | null
           uploaded_by?: string
+          uploaded_by_user_id?: string | null
         }
         Relationships: [
           {
